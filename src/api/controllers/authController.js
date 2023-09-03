@@ -9,18 +9,22 @@ const registationControler = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   const existingUser = await User.find({ email });
   if (!firstName) {
-    res.send({ error: "First Name is required" });
+    return res.send({ error: { firstName: "First Name is required" } });
+    // return res.send({ error: "First Name is required" });
   } else if (!lastName) {
-    res.send({ error: "Last Name is required" });
+    return res.send({ error: { lastName: "Last Name is required" } });
   } else if (!email) {
-    res.send({ error: "Email is required" });
+    return res.send({ error: { email: "Email is required" } });
   } else if (validateEmail(email)) {
-    res.send({ error: "Email is wrong" });
+    return res.send({ error: { email: "Email is wrong" } });
   } else if (!password) {
-    res.send({ error: "Password is required" });
+    return res.send({ error: { password: "Password is required" } });
   } else {
-    if (existingUser.length > 0) {
-      res.send({ error: "User already exists" });
+    if ( existingUser.length > 0 )
+    {
+      console.log("User already exists");
+      return res.status(400).json({ error: "User already exists" });
+
     } else {
       bcrypt.hash(password, 10, async function (err, hash) {
         let user = new User({
@@ -48,7 +52,7 @@ const registationControler = async (req, res) => {
             { new: true }
           );
         }, 120000);
-        res.json(user);
+        res.send({ success: "Registation Successfull" });
       });
     }
   }
