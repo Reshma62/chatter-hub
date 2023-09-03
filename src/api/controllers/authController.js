@@ -20,11 +20,9 @@ const registationControler = async (req, res) => {
   } else if (!password) {
     return res.send({ error: { password: "Password is required" } });
   } else {
-    if ( existingUser.length > 0 )
-    {
+    if (existingUser.length > 0) {
       console.log("User already exists");
       return res.status(400).json({ error: "User already exists" });
-
     } else {
       bcrypt.hash(password, 10, async function (err, hash) {
         let user = new User({
@@ -57,4 +55,33 @@ const registationControler = async (req, res) => {
     }
   }
 };
-module.exports = { registationControler };
+const loginController = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email) {
+    return res.send({ error: { email: "Email is required" } });
+  } else if (validateEmail(email)) {
+    return res.send({ error: { email: "Email is wrong" } });
+  } else if (!password) {
+    return res.send({ error: { password: "Password is required" } });
+  } else {
+    const existingUser = await User.find({ email });
+    const emailCheck = existingUser[0]?.email;
+    const passCheck = existingUser[0]?.password;
+    if (emailCheck === email) {
+      bcrypt.compare(password, passCheck, async function (err, result) {
+        if (result) {
+          return res
+            .status(200)
+            .json({ success: "Login successfull. Please wait for redriction" });
+        } else {
+          return res.status(400).json({ error: "Cradential not match" });
+        }
+      });
+    } else {
+      return res.status(400).json({ error: "Cradential not match" });
+    }
+
+  }
+};
+module.exports = { registationControler, loginController };

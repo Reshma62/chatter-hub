@@ -1,15 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import InputField from "../../components/InputField";
 import Link from "next/link";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-function SignUp() {
+import { useRouter } from "next/navigation";
+const page = () => {
+  const router = useRouter();
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
     email: "",
     password: "",
   });
@@ -25,12 +24,8 @@ function SignUp() {
   /* Data send */
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const res = await axios.post("http://localhost:8000/auth/registation", {
-        firstName: formData.firstName,
-
-        lastName: formData.lastName,
+      const res = await axios.post("http://localhost:8000/auth/login", {
         email: formData.email,
         password: formData.password,
       });
@@ -38,8 +33,6 @@ function SignUp() {
       if (res.data.success) {
         toast.success(res.data.success);
         setFormData({
-          firstName: "",
-          lastName: "",
           email: "",
           password: "",
         });
@@ -47,11 +40,13 @@ function SignUp() {
       } else if (res.data.error) {
         setErrors(res.data.error);
       }
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     } catch (error) {
       toast.error(error.response.data.error);
     }
   };
-
   return (
     <div className="hero min-h-screen bg-base-200">
       <ToastContainer
@@ -67,10 +62,10 @@ function SignUp() {
         theme="light"
       />
       <ToastContainer />
-      <div className="hero-content flex-col lg:flex-row">
+      <div className="hero-content flex-col lg:flex-row !max-w-[100rem]">
         <div className="text-center lg:text-left">
           <h1 className="text-5xl font-bold text-headingColor">
-            Welcome to <br />{" "}
+            Welcome back to <br />{" "}
             <span className="text-primary mt-4 inline-block">Chatter Hub</span>
           </h1>
           <p className="py-6 text-pColor">
@@ -79,42 +74,6 @@ function SignUp() {
         </div>
         <div className="card flex-shrink w-full max-w-sm shadow-2xl bg-base-100">
           <div className="card-body">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">First Name:</span>
-              </label>
-              <input
-                type="text"
-                placeholder="first name"
-                className="input input-bordered"
-                value={formData.firstName}
-                name="firstName"
-                onChange={handleInputChange}
-              />
-              {errors.firstName && (
-                <p className="bg-red-500 text-white my-3 p-3 rounded">
-                  {errors.firstName}
-                </p>
-              )}
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Last Name:</span>
-              </label>
-              <input
-                type="text"
-                placeholder="last name"
-                className="input input-bordered"
-                value={formData.lastName}
-                name="lastName"
-                onChange={handleInputChange}
-              />{" "}
-              {errors.lastName && (
-                <p className={`bg-red-500 text-white my-3 p-3 rounded`}>
-                  {errors.lastName}
-                </p>
-              )}
-            </div>
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Email:</span>
@@ -158,7 +117,7 @@ function SignUp() {
             </div>
             <div className="form-control mt-6">
               <button className="btn btn-primary" onClick={handleSubmit}>
-                Sign up
+                Login
               </button>
             </div>
           </div>
@@ -166,6 +125,6 @@ function SignUp() {
       </div>
     </div>
   );
-}
+};
 
-export default SignUp;
+export default page;
