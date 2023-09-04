@@ -5,6 +5,9 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { usersInformation } from "../GlobalRedux/slices/useSlices";
+
 const page = () => {
   const router = useRouter();
   const [errors, setErrors] = useState({});
@@ -12,7 +15,11 @@ const page = () => {
     email: "",
     password: "",
   });
+  const dispatch = useDispatch();
 
+
+  // Dispatch the action with a payload
+  // dispatch(userRegistration("newUserValue"));
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setErrors({});
@@ -29,7 +36,10 @@ const page = () => {
         email: formData.email,
         password: formData.password,
       });
-
+      const userInfo = {
+        email: res.data.email,
+        pass: res.data.pass,
+      };
       if (res.data.success) {
         toast.success(res.data.success);
         setFormData({
@@ -43,6 +53,8 @@ const page = () => {
       setTimeout(() => {
         router.push("/");
       }, 2000);
+      dispatch( usersInformation( userInfo ) );
+      localStorage.setItem("users", JSON.stringify(userInfo))
     } catch (error) {
       toast.error(error.response.data.error);
     }

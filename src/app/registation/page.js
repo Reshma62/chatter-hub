@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import InputField from "../../components/InputField";
+import InputField from "../components/InputField";
 import Link from "next/link";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";

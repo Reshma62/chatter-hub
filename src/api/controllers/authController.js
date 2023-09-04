@@ -71,9 +71,11 @@ const loginController = async (req, res) => {
     if (emailCheck === email) {
       bcrypt.compare(password, passCheck, async function (err, result) {
         if (result) {
-          return res
-            .status(200)
-            .json({ success: "Login successfull. Please wait for redriction" });
+          return res.status(200).json({
+            success: "Login successful. Please wait for redirection",
+            email: emailCheck,
+            pass: passCheck,
+          });
         } else {
           return res.status(400).json({ error: "Cradential not match" });
         }
@@ -81,7 +83,6 @@ const loginController = async (req, res) => {
     } else {
       return res.status(400).json({ error: "Cradential not match" });
     }
-
   }
 };
 module.exports = { registationControler, loginController };
